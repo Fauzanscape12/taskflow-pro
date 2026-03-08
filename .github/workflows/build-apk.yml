@@ -1,0 +1,51 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify Flutter installation
+        run: flutter doctor -v
+
+      - name: Build APK (Release)
+        run: flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: taskflow-pro-release
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      - name: Build APK (Debug)
+        if: github.event_name == 'workflow_dispatch'
+        run: flutter build apk --debug
+
+      - name: Upload Debug APK
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: taskflow-pro-debug
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 7
