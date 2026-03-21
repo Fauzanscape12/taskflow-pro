@@ -17,8 +17,14 @@ import 'data/datasources/local/database.dart';
 import 'features/timer/bloc/pomodoro_bloc.dart';
 import 'features/voice/bloc/voice_bloc.dart';
 
+// Import Error Handler
+import 'services/error_handler.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Error Handler (Sentry + Telegram)
+  await ErrorHandler.init();
 
   // Initialize locale data for DateFormat
   await initializeDateFormatting('id_ID', null);

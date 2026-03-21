@@ -57,3 +57,60 @@ jobs:
           name: taskflow-pro-debug
           path: build/app/outputs/flutter-apk/app-debug.apk
           retention-days: 7
+
+      - name: Get version from pubspec
+        id: version
+        run: |
+          VERSION=$(grep "version:" pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release (on tags)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/app/outputs/flutter-apk/app-release.apk
+          generate_release_notes: true
+          name: TaskFlow Pro ${{ steps.version.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send notification to Telegram
+        if: success() && (github.event_name == 'push' || startsWith(github.ref, 'refs/tags/v'))
+        run: |
+          MESSAGE="✅ TaskFlow Pro build success!\n\n"
+          MESSAGE+="Branch: ${{ github.ref_name }}\n"
+          MESSAGE+="Commit: ${{ github.sha }}\n"
+          MESSAGE+="Author: ${{ github.actor }}\n\n"
+
+          if [ "${{ startsWith(github.ref, 'refs/tags/v') }}" = "true" ]; then
+            MESSAGE+="🚀 Release ${{ steps.version.outputs.version }} released!\n"
+            MESSAGE+="Download: ${{ github.server_url }}/${{ github.repository }}/releases/latest"
+          else
+            MESSAGE+="🔧 Workflow: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          fi
+
+          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}",
+              "text": "'"${MESSAGE}"'",
+              "parse_mode": "Markdown",
+              "disable_web_page_preview": true
+            }'
+
+      - name: Send failure notification to Telegram
+        if: failure()
+        run: |
+          MESSAGE="❌ TaskFlow Pro build FAILED!\n\n"
+          MESSAGE+="Branch: ${{ github.ref_name }}\n"
+          MESSAGE+="Commit: ${{ github.sha }}\n"
+          MESSAGE+="Author: ${{ github.actor }}\n"
+          MESSAGE+="Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}",
+              "text": "'"${MESSAGE}"'",
+              "parse_mode": "Markdown"
+            }'
