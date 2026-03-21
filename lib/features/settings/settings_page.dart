@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/theme_provider.dart';
+import 'update_check_dialog.dart';
 
 /// Settings Page
 class SettingsPage extends StatefulWidget {
@@ -336,6 +337,16 @@ class _SettingsPageState extends State<SettingsPage> {
                       color: AppConstants.primaryColor,
                     ),
                   ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.system_update_alt),
+                  title: const Text('Cek Update'),
+                  subtitle: const Text('Cek versi terbaru dari aplikasi'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    showUpdateCheckDialog(context);
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.info_outline),

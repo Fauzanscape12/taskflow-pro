@@ -13,6 +13,7 @@ Advanced Task Management App - More powerful than Todoist!
 - 🤖 AI-Powered Task Scheduling
 - 🌙 Beautiful Dark Mode
 - 📱 Material Design 3
+- 🔄 **OTA Update** - Check & update app directly from GitHub Releases
 
 ## Getting Started
 

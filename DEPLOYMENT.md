@@ -1,6 +1,6 @@
 # TaskFlow Pro - Deployment Guide
 
-Complete deployment guide for TaskFlow Pro with auto-update, error monitoring, and Telegram integration.
+Complete deployment guide for TaskFlow Pro with **OTA Update**, auto-build, error monitoring, and Telegram integration.
 
 ## 🚀 Deployment Options
 
@@ -42,6 +42,31 @@ flutter build web --release
 # Deploy
 netlify deploy --prod --dir=build/web
 ```
+
+---
+
+### 🔄 OTA Update (Over-the-Air Update)
+
+**TaskFlow Pro sekarang memiliki fitur OTA Update!**
+
+**Cara kerja:**
+1. Aplikasi cek update dari GitHub Releases API
+2. Jika ada versi terbaru, user dapat download & install APK langsung dari dalam aplikasi
+3. Update diinstall tanpa perlu buka Play Store
+
+**Cara pakai:**
+1. Buka **Pengaturan** → **Tentang** → **Cek Update**
+2. Aplikasi akan cek versi terbaru dari GitHub Releases
+3. Jika ada update baru, user akan diminta untuk download & install
+
+**Untuk developer (Bos Jon):**
+- Create new release di GitHub dengan tag versi (contoh: `v1.0.1`)
+- Upload APK sebagai asset di release tersebut
+- Aplikasi akan otomatis mendeteksi update baru
+
+**Catatan:**
+- APK harus diupload dengan nama yang mengandung `.apk`
+- Tag release harus dalam format `vX.X.X` (contoh: `v1.0.1`, `v1.1.0`)
 
 ---
 

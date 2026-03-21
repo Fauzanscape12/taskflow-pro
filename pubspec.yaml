@@ -75,6 +75,10 @@ dependencies:
   # Pomodoro Timer
   timer_builder: ^2.0.0
 
+  # App Update & Version
+  package_info_plus: ^8.0.0
+  install_plugin: ^2.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
